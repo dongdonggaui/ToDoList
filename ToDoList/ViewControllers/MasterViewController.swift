@@ -16,6 +16,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        self.title = "今天"
     }
 
     override func viewDidLoad() {
@@ -23,13 +25,25 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         // Do any additional setup after loading the view, typically from a nib.
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
 
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
+//        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
+        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "showAddTask")
         self.navigationItem.rightBarButtonItem = addButton
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: - private
+    
+    func showAddTask() {
+        self.performSegueWithIdentifier("showAddTask", sender: nil)
     }
 
     func insertNewObject(sender: AnyObject) {
@@ -102,6 +116,13 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
         let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as NSManagedObject
         cell.textLabel!.text = object.valueForKey("timeStamp")!.description
+    }
+    
+    override func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let offset = scrollView.contentOffset.y;
+        if offset <= -100 {
+            self.performSegueWithIdentifier("showAddTask", sender: nil)
+        }
     }
 
     // MARK: - Fetched results controller
